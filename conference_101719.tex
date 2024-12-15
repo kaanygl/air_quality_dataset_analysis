@@ -1,0 +1,444 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\renewcommand\IEEEkeywordsname{Keywords}
+\usepackage{multirow} 
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{placeins}
+\usepackage{float}
+\usepackage{multirow}
+
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Analysis of Indoor Air Quality Data from Brindisi Airport \\
+{\footnotesize \textsuperscript{}
+}
+\thanks{}
+}
+
+\author{\IEEEauthorblockN{ Furkan Temizel}
+\IEEEauthorblockA{\textit{Department of Computer Engineering } \\
+\textit{Istanbul Kultur University}\\
+İstanbul, Türkiye \\
+2100003964@stu.iku.edu.tr}
+\and
+\IEEEauthorblockN{ Melis Yanık}
+\IEEEauthorblockA{\textit{Department of Computer Engineering } \\
+\textit{Istanbul Kultur University}\\
+İstanbul, Türkiye \\
+2100005652@stu.iku.edu.tr}
+\and
+\IEEEauthorblockN{ Kaan Yegül}
+\IEEEauthorblockA{\textit{Department of Computer Engineering } \\
+\textit{Istanbul Kultur University}\\
+İstanbul, Türkiye \\
+2000005031@stu.iku.edu.tr}
+}
+
+\maketitle
+
+\begin{abstract}
+This project analyzes indoor air quality datasets in a traveler transit area at Brindisi Airport in Italy by using data collected over one year. It leverages IoT-based air monitoring systems to track gas concentrations, CO2 levels, temperature, humidity and particulate matter. The main purpose of the project is to find the relationship between the number of people in the environment and the factors affecting air pollution. In the research, firstly, preprocessing techniques were applied to clean the data from outliers and make it ready for analysis. Then, the dataset was tested by applying different tests and examined in terms of different parameters.
+\vspace{1mm}
+\end{abstract}
+
+\begin{IEEEkeywords}
+Data Science; Machine Learning; Air Quality Dataset; Preprocessing; Statistical Analysis; Statistical Test; Sampling; Classification.
+\end{IEEEkeywords}
+
+\section{Introduction}
+Indoor air quality in high traffic areas like airports significantly impacts the health and comfort of passengers. This study analyzes key air quality parameters including CO2 (Carbon dioxide) levels, temperature, humidity and particulate matter (PM) to identify trends and relationships within the Brindisi Airport in Italy. This study uses air quality data collected over a year from three different measurement points in Brindisi Airport. Data preprocessing, statistical analysis and classification techniques are used to evaluate environmental conditions and their dependence on passenger levels.
+\section{RELATED WORK}
+
+"Comparative Analysis of Machine Learning Algorithms for Predicting Air Quality Index" article [1] uses a data set that contains different types of air pollutant data collected hourly from different stations in different cities in India. The dataset contains data collected every hour between the dates January 2015 - July  2020 and includes 16 features (columns) and 100,000 data rows. Goal of the study is to analyze the concentration levels of air pollutants based on a machine learning approach. The results show the Random Forest classification method to perform the most accurate classification method with an accuracy of 74\%.
+\vspace{5mm}
+\vspace{5mm}
+
+"Machine Learning for Air Quality Classification in IoT-based Network with Low-cost Sensors" article [2] analyzes machine learning and deep learning models for air quality classification. 9 machine learning and 3 deep learning models are trained and tested on a dataset consisting of 145,440 independent measurements from India, Serbia, USA, Australia and Taiwan. The results show that when low-cost sensors were used deep learning models performed the best in classification accuracy in terms of Air Quality Index (AQI) calculated using formulas. The best performing model achieved an accuracy of 97.70\%.
+\vspace{5mm}
+
+"The Prediction of Quality of the Air Using Supervised Learning" article [3] investigates the use of supervised machine learning algorithms to predict the air quality index in India. six machine learning algorithms have been compared, those are: Logistic Regression, Decision Tree, Support Vector Machine (SVM), Random Forest Tree, Naive Bayes Theorem and K-Nearest Neighbors. As a result the Random Forest algorithm performed the best achieving an accuracy of 99.16\% followed by Logistic Regression with 97.46\% accuracy.
+\vspace{5mm}
+
+"Performance Analysis of Machine Learning Models for Air Pollution Prediction" article [4] calculates and compares the performances of different machine learning models for air pollution prediction for a dataset from the State Pollution Control Board in Odisha India. Models such as SVM, Random Forest Classifier, Logistic Regression, Linear Regression and Random Forest Regression are used. Results show that Random Forest Regression was found to perform the best with RMSE and MAE values of 2.63 and 3.32 respectively and for classification models the Random Forest Classifier performed best with an accuracy of 93.5\%.
+\vspace{5mm}
+
+"Prediction of Air Quality Index Using Supervised Machine Learning Algorithms" article [5] examines supervised machine learning algorithms to predict the Air Quality Index and control air pollution. Results of Random Forest Regression, Support Vector Regression and Linear Regression algorithms have been compared to one another. The accuracy of the models was measured using RMSE. Random Forest Regression performed the best with an RMSE value of 0.812.
+\vspace{5mm}
+
+"Prediction of Air Pollutants Using Supervised Machine Learning" article [6] checks different supervised machine learning methods' results to predict air quality from air pollutants. Six classification algorithms; Logistic Regression, Naive Bayes, SVM, Random Forest, KNN and Decision Tree are used for comparing with one another. The Decision Tree algorithm was found to perform the best with an accuracy of 99.8\% followed by Random Forest with an accuracy of 99.1\%.
+\vspace{5mm}
+
+\section{Methodology}
+
+This study analyzes an air quality dataset collected over one year (October 2022 to October 2023) in the indoor transit area of Brindisi airport in Italy [7]. The dataset consists of 3 CSV files with 7M to 11M records each. Containing data on gas concentrations, CO2 levels, air temperature, humidity and particulate matter (PM0.5, PM1, PM2.5, PM4, PM10). The data was gathered by three IoT sensing nodes designed at the IoTLab of the University of Parma using low-cost commercial sensors that recorded measurements every 2 seconds.
+\vspace{5mm}
+
+\subsection{Data Preprocessing}
+The preprocessing of the dataset was made to ensure that the data was clean, consistent and ready for analysis. The dataset was loaded using the correct delimiter since the values in the CSV files were separated by semicolons rather than commas. The delimiter was specified while loading the data to ensure that the values are seperated as expected.
+\vspace{5mm}
+To identify any missing or null values the code "print(df.isnull().sum())" was used. It was found that some columns contained null values and they were replaced with zeros to prevent any issues during analysis.
+\vspace{5mm}
+The columns id\_measure and node\_id were irrelevant for the analysis and were dropped from the dataset. The data types of the columns were examined, ts\_insertion column which contained timestamp data was transformed into the datetime format for proper time series analysis.
+\vspace{5mm}
+Outliers in the dataset were detected using the Interquartile Range (IQR) method. Outliers were then handled by replacing them with the lower or upper bounds derived from the IQR. Boxplots were used to visualize the distribution of the data before and after the outlier handling process.
+\vspace{5mm}
+\newpage
+The Interquartile Range (IQR) is a measure of statistical dispersion, calculated as the difference between the third quartile (\( Q_3 \)) and the first quartile (\( Q_1 \)):
+
+\[
+IQR = Q_3 - Q_1
+\]
+
+Outliers are identified by calculating the lower and upper bounds:
+
+\[
+\text{Lower Bound} = Q_1 - 1.5 \times IQR
+\]
+\[
+\text{Upper Bound} = Q_3 + 1.5 \times IQR
+\]
+
+Data values outside these bounds are considered outliers and are handled by replacing them with the nearest bound.
+\vspace{5mm}
+
+The three datasets were preprocessed separately using the same steps. In addition the combined version of all three datasets was also preprocessed. For the combined dataset to distinguish between the different sensor datasets three additional columns were added for one-hot encoding representing the brown, gold and silver datasets. All the singular and combined datasets were now fully prepared for any analysis.
+\vspace{5mm}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{preproc1.png}
+    \caption{Boxplots Before Preprocessing}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\linewidth]{preproc2.png}
+    \caption{Boxplots After Preprocessing}
+    \label{fig:enter-label}
+\end{figure}
+
+
+\subsection{Comparative Analysis and Correlation Matrices}
+
+
+\vspace{5mm}
+We created a correlation matrix which visually represents the strength and direction of relationships between variables in the dataset. The correlation analysis was performed before and after the outlier handling to see the effect of outlier cleaning. Relationships between temperature, CO2 levels and humidity were examined. 
+\vspace{5mm}
+Scatterplots we crated were used to analyze the relationships between some variables including temperature, CO2 levels, temperature and humidity. These scatterplots were categorized by dataset (Brown, Gold, Silver) to compare between their results in certain analysis that's been made. Time plots were also made to track CO2 levels over different quarters in 2022 and 2023. Time plots made it easier to identify any shifts in CO2 behavior across the datasets and over time.
+\vspace{5mm}
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{correlation.png}
+    \caption{Correlation Matrices Before Preprocessing (on left) and After Preproccesing (on right)}
+    \label{fig:enter-label}
+\end{figure}
+
+\subsection{Human Density Classification and Machine Learning}
+Human density classification uses the model Random Forest to predict occupancy levels based on environmental factors such as CO2 concentration, temperature, humidity and particulate matter (PM). The model categorizes human density into three classes; Low, Medium and High. Random Forest is trained to learn the relationship between the environmental features (hour, scd30\_temp, scd30\_hum, sps30\_pm10\_ug, sps30\_pm1\_ug). The model is trained on an 80/20 split of the dataset with environmental features used to predict the target variable which is human density. 
+\vspace{5mm}
+
+A Random Forest is a classifier consisting of a collection of tree-structured classifiers \{h(x, 0k), k = 1, . . .\}; where \{0k\} are independent, identically distributed random vectors and each tree casts a unit vote for the most popular class at input x. To build a forest, random vectors are usually generated that guide the growth of each tree. In random split selection at each node the split is chosen randomly from among the best K splits. The generalization error of the random forest converges to a limit as the number of trees in the forest increases. The generalization error of the forest depends on the strength of the individual trees and the correlation between them. [8]
+\vspace{5mm}
+
+\subsection{Air Quality Index (AQI) Analysis}
+
+Air Quality Index (AQI) was calculated for PM concentration values especially PM2.5 and PM10 in the dataset which stands for particulate matter with diameter of 10 microns for PM10 and for diameter of 2.5 microns for PM2.5. The hourly average concentrations of PM2.5 and PM10 were calculated and visualized. Lastly these values were used to calculate the AQI scores. 
+\vspace{5mm}
+
+\[
+AQI = AQI_{\text{low}} + \frac{(C - C_{\text{low}})}{(C_{\text{high}} - C_{\text{low}})} \times (AQI_{\text{high}} - AQI_{\text{low}})
+\]
+where:
+\[
+\small
+\]
+\[
+\small
+C = \text{Pollutant concentration}
+\]
+\[
+\small
+C_{\text{low}} = \text{The lower concentration breakpoint corresponding to } C
+\]
+\[
+\small
+C_{\text{high}} = \text{The upper concentration breakpoint corresponding to } C
+\]
+\[
+\small
+AQI_{\text{low}} = \text{The lower AQI value corresponding to } C_{\text{low}}
+\]
+\[
+\small
+AQI_{\text{high}} = \text{The upper AQI value corresponding to } C_{\text{high}}
+\]
+\vspace{5mm}
+
+
+
+Air Quality Index (AQI) is developed by the United States Environmental Protection Agency (EPA). Classifies air quality levels using a numeric and color coded systems. It measures pollutants like particulate matter (PM), ozone and carbon monoxide. Higher AQI values indicate worse air quality and greater health risks. [9] 
+\vspace{5mm}
+
+\section{Experimental Results}
+
+System configurations used in this study are as follows: Microsoft Windows 11 Home Single Language (64-bit), a 12th Gen Intel(C) Core(TM) i5-12400F 2.50 GHz CPU and 16.0 GB of RAM. And as software, Jupyter Notebook, Google Colab and GitHub were used.
+\vspace{5mm}
+
+\subsection{Comparative Analyses}
+
+\subsubsection{Temperature – CO2 Scatterplots}
+\textcolor{white}{[h]} 
+
+This analysis as been made on all 3 datasets seperately. The scatterplots illustrate the relationship between temperature and CO2 concentrations for the three datasets (Brown, Gold and Silver). Generally as the temperature increases, CO2 concentration tends to rise. Higher temperatures in the airport are associated with higher CO2 levels which may be due to increased human activity as warmer temperatures often correlate with increased air circulation and passenger density. There is a positive correlation between CO2 and Temperature on all three datasets and all datasets present a similar relationship between Temperature and CO2 but there are some differences in the distribution of data points.
+\vspace{5mm}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{co2-temp.png}
+    \caption{CO2 - Temperature Scatterplot, Brown Dataset}
+    \label{fig:enter-label}
+\end{figure}
+\newpage
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{co2-temp (2).png}
+    \caption{CO2 - Temperature Scatterplot, Gold Dataset}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{co2-temp (3).png}
+    \caption{CO2 - Temperature Scatterplot, Silver Dataset}
+    \label{fig:enter-label}
+\end{figure}
+\newpage
+\subsubsection{Temperature – Humidity}
+\textcolor{white}{[h]} 
+
+This scatter plot shows the relationship between temperature and humidity across the three datasets (Brown, Gold, Silver). Plot shows the relationship between temperature and humidity within each dataset. A general trend of increasing temperature and decreasing humidity can be observed. However, the relationship is not the same with some variation between the datasets.
+\vspace{5mm}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{temp-hum.png}
+    \caption{Temperature - Humidity Scatterplot Graph for Brown, Gold and Silver Datasets Combined}
+    \label{fig:enter-label}
+\end{figure}
+\vspace{5mm}
+
+\subsubsection{CO2 – Time Plot}
+\textcolor{white}{[h]}
+
+These tables provide an analysis of CO2 levels over time segmented quarterly from 2022 quarter 4 to 2023 quarter 4 using a combined dataset of all three groups Brown, Gold and Silver combined. In the 4th quarter of 2022 CO2 levels peaked between December 8 and December 15. In the 1st quarter of 2023 a spike in values can be seen between February 1 and February 15 with CO2 levels rising above 1500. In 2023Q2 CO2 levels reached a peak between April 15 and May 1 around a value of 1750. Quarter 4 of 2023 showed some fluctuations the general range of CO2 levels remained consistently high between 750 and 1500. In the 3rd quarter of 2023 and the 4th quarter of 2023 there were no distinct peaks seen. These results show that the overall fluctuations in CO2 levels remains consistent.
+\vspace{5mm}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{22q4-co2time.png}
+    \caption{CO2 – Time Plot 2022Q4}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{23q1-co2time.png}
+    \caption{CO2 – Time Plot 2023Q1}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{23q2-co2time.png}
+    \caption{CO2 – Time Plot 2023Q2}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{23q3-co2time.png}
+    \caption{CO2 – Time Plot 2023Q3}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{23q4-co2time.png}
+    \caption{CO2 – Time Plot 2023Q4}
+    \label{fig:enter-label}
+\end{figure}
+
+
+
+\subsection{Statistical Tests}
+
+ANOVA was performed to assess CO2 differences between three datasets. Those are Brown, Gold and Silver. ANOVA results are as follows: F-statistic is 80501.23 and the p-value is 0.0. The null hypothesis (H0) assumed no significant difference in CO2 means, while the alternative hypothesis (H1) suggested at least one group differed. 
+\vspace{5mm}
+Since the p-value is less than 0.05, we reject the null hypothesis, indicating a significant difference in CO2 levels between the groups.
+\vspace{5mm}
+
+\begin{table}[h]
+\centering
+\caption{CO2 Means for Different Sampling Methods}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Sampling Method} & \textbf{CO2 Mean} \\
+\hline
+Simple Random Sampling & 663.1795 \\
+Cluster Sample & 647.06 \\
+\hline
+Stratified Random Sampling (3 datasets) & \\
+\hline
+Brown Dataset & 660.96 \\
+Gold Dataset& 660.08 \\
+Silver Dataset& 637.23 \\
+\hline
+\end{tabular}
+\end{table}
+
+Simple Random Sample showed the highest CO2 mean of 663.18 which suggests that this method may be more representative of the overall population CO2 levels.
+Cluster Sample yielded a lower CO2 mean of 647.06 which could reflect a sampling bias, as only certain clusters were chosen based on specific criteria (even numbered clusters).
+Stratified Random Sampling provided CO2 means for each dataset (Brown, Gold and Silver): Brown Sample: 660.96, Gold Sample: 660.08, Silver Sample: 637.23.
+These results show differences across different datasets with the Silver sample having the lowest CO2 mean which might suggest differences in characteristics within each dataset.
+\vspace{5mm}
+Based on these results the Simple Random Sample method appears to give a higher average CO2 level compared to the other sampling techniques. However, the Stratified Random Sampling method provides more detailed insights into the specific groups while the Cluster Sampling method yielded the lowest CO2 mean. 
+\vspace{5mm}
+
+
+\subsection{Human Density Classification using Random Forest}
+
+The data was initially categorized into three classes based on CO2 levels using the thresholds of 625 ppm and 725 ppm.
+\vspace{5mm}
+\begin{itemize}
+    \item Low: CO2 $<$ 625 ppm
+    \item Medium: 625 ppm $\leq$ CO2 $\leq$ 725 ppm
+    \item High: CO2 $>$ 725 ppm
+\end{itemize}
+\vspace{5mm}
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{randf2.jpg}
+    \caption{Average CO2 Levels Throughout the Day for Each Hour Across All Days Categorized}
+    \label{fig:enter-label}
+\end{figure}
+\vspace{5mm}
+
+
+Other environmental factors such as temperature (scd30\_temp), humidity (scd30\_hum) and hour of day are used as features for the Random Forest model. The Random Forest model is trained to predict one of these three categories based on the features provided. After training the model can take new observations and predict which of the three classes they belong to. The Random Forest model was used to classify the human density based on environmental factors such as temperature, humidity, date  etc. The model was trained on 80\% of the data with 20\% reserved for testing. The model achieved an accuracy of 77\% this shows that it performed well in predicting human density based on environmental factors. The model performed best in identifying medium density areas, with a high recall rate of 93\%, but struggled with the high density class, showing a lower recall of 38\%.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{randf3.png}
+    \caption{RandomForest Results}
+    \label{fig:enter-label}
+\end{figure}
+\vspace{5mm}
+\newpage
+
+During the analysis the following hypotheses were assessed to evaluate the influence of environmental factors on CO2 levels, humidity and temperature in relation to human activity:
+\vspace{5mm}
+
+\noindent\textbf{Hypothesis 1 (CO2 and Human Activity):} \\
+\textbf{H0:} CO2 levels are directly influenced by human activity. \\
+\textbf{H1:} CO2 levels are not influenced by human activity and fluctuations in CO2 concentration are due to other factors. \\
+\vspace{5mm}
+
+\noindent\textbf{Hypothesis 2 (Humidity and Human Activity):} \\
+\textbf{H0:} Humidity levels are influenced by human activity as increased human presence leads to higher CO2 emissions which in turn release water vapor (H2O) as part of the respiratory process. \\
+\textbf{H1:} Humidity levels are independent of human activity and fluctuate due to other environmental factors. \\
+\vspace{5mm}
+
+\noindent\textbf{Hypothesis 3 (Temperature and Human Activity):} \\
+\vspace{2mm}
+\textbf{H0:} Temperature is influenced by human activity. \\
+\vspace{2mm}
+\textbf{H1:} Temperature is not significantly influenced by human activity and remains unaffected by the number of people.
+\vspace{5mm}
+
+CO2 production rate of occupants in an indoor space is an important factor in indoor CO2 concentrations which also affects ventilation rates. When the ventilation rate is fixed an increase in the number of people in the space will lead to an increase in CO2 production rate causing an increase in indoor CO2 concentration.  [10] Null hypothesis of Hypothesis 1 is true. Number of people in an indoor space increases the CO2 production rate leading to higher indoor CO2 concentrations. 
+
+\[
+\text{C}_6\text{H}_{12}\text{O}_6 + 6\text{O}_2 \rightarrow 6\text{CO}_2 + 6\text{H}_2\text{O} + \text{Energy (ATP)}
+\]
+\vspace{5mm}
+
+Here during respiration there is produced carbon dioxide (CO2) and water (H2O) as byproducts. The increased CO2 levels will naturally influence the humidity as well. Since water vapor is produced during this process it is directly linked to the amount of CO2 generated enabling us to make a connection between the number of people and indoor humidity levels. Also the energy produced (ATP) from this biochemical reaction also plays a role in influencing the temperature within the indoor environment. As more people generate more ATP through metabolic processes, their body heat contributes to the rise in temperature.
+\vspace{5mm}
+\newpage
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1.1\linewidth]{temp-hum-co2.jpg}
+    \caption{Relation between the Normalized values of Temperature, Humidity and CO2 Concentration}
+    \label{fig:enter-label}
+\end{figure}
+
+There can also be correlation observed in the dataset between these values
+\vspace{5mm}
+
+\subsection{Air Quality Index (AQI) Analysis}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{aqi (2).jpg}
+    \caption{Hourly average values of PM2.5 and PM10 levels throughout the day}
+    \label{fig:enter-label}
+\end{figure}
+
+Figure 16 shows the average PM2.5 and PM10 levels by hour the trends of both pollutants are closely aligned. PM10 consistently records slightly higher values. The highest concentrations happen at hours 11-12 and 19-20 while the lowest values are observed around hour 4. 
+\vspace{5mm}
+\newpage
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{aqi (1).jpg}
+    \caption{Hourly average PM2.5 and PM10 AQI Levels}
+    \label{fig:enter-label}
+\end{figure}
+
+Figure 17 displays the average hourly AQI values of PM2.5 and PM10 concentrations over a 24-hour period. PM2.5 values range between 12 and 20. PM10 fluctuates between 0 and 4 peaking between hours 9-14 and 18-22. Both PM2.5 and PM10 AQI levels remain within the 0-50 AQI range which is considered safe.
+\vspace{5mm}
+
+\section{Conclusion}
+
+This study analyzed indoor air quality in the transit area of Brindisi airport in Italy using a dataset collected from October 2022 to October 2023. The analysis includes data preprocessing, comparative analysis, machine learning for human density classification and air quality index (AQI) evaluations.
+\vspace{5mm}
+
+The datasets were cleaned, outliers handled using the IQR method and timestamps converted to enable time-series analysis. Correlation matrices and scatterplots revealed relationships between environmental variables. A Random Forest model effectively classified human density levels based on environmental features. AQI analysis based on PM2.5 and PM10 concentrations provided critical insights into the air quality. Statistical tests revealed differences in CO2 levels between the three datasets. 
+\vspace{5mm}
+
+This study shows the importance of monitoring and analyzing indoor air quality datas in areas that has high human traffic like airports. Integrating machine learning models and AQI calculations to those datas can provide important insights to optimize air quality management and ensure a healthier indoor environment.
+\vspace{5mm}
+
+\begin{thebibliography}{00}
+\bibitem{b1} A. Singh, R. Kumar and N. Hasteer, "Comparative Analysis of Classification Models for Predicting Quality of Air," 2020 IEEE 5th International Conference on Computing Communication and Automation (ICCCA), Greater Noida, India, 2020, pp. 7-11, doi: 10.1109/ICCCA49541.2020.9250805.
+
+\bibitem{b2} N. Z. Bogdanović, M. T. Koprivica and G. B. Marković, "Machine Learning for Air Quality Classification in IoT-based Network with Low-cost Sensors," 2021 15th International Conference on Advanced Technologies, Systems and Services in Telecommunications (TELSIKS), Nis, Serbia, 2021, pp. 303-306, doi: 10.1109/TELSIKS52058.2021.9606379.
+
+\bibitem{b3}C. R. K, N. R. K, B. P. K and P. S. Rajendran, "The Prediction of Quality of the Air Using Supervised Learning," 2021 6th International Conference on Communication and Electronics Systems (ICCES), Coimbatre, India, 2021, pp. 1-5, doi: 10.1109/ICCES51350.2021.9488983.
+
+\bibitem{b4}H. Srivastava, G. K. Sahoo, S. K. Das and P. Singh, "Performance Analysis of Machine Learning Models for Air Pollution Prediction," 2022 International Conference on Smart Generation Computing, Communication and Networking (SMART GENCON), Bangalore, India, 2022, pp. 1-6, doi: 10.1109/SMARTGENCON56628.2022.10084037.
+
+\bibitem{b5}K. Saikiran, G. Lithesh, B. Srinivas and S. Ashok, "Prediction of Air Quality Index Using Supervised Machine Learning Algorithms," 2021 2nd International Conference on Advances in Computing, Communication, Embedded and Secure Systems (ACCESS), Ernakulam, India, 2021, pp. 1-4, doi: 10.1109/ACCESS51619.2021.9563323.
+
+\bibitem{b6}S. Yarragunta, M. A. Nabi, J. P and R. S, "Prediction of Air Pollutants Using Supervised Machine Learning," 2021 5th International Conference on Intelligent Computing and Control Systems (ICICCS), Madurai, India, 2021, pp. 1633-1640, doi: 10.1109/ICICCS51141.2021.9432078.
+
+\bibitem{b7} L. Davoli, L. Belli  and G. Ferrari, Air quality dataset from an indoor airport travelers transit area. Dataset,  DOI: 10.17632/bv2hvm4pmz.
+
+
+\bibitem{b8} Breiman, L. Random Forests. Machine Learning 45, 5–32 (2001). DOI: https://doi.org/10.1023/A:1010933404324
+
+\bibitem{b9} M. Matthias, S. Decherney, and M. Petruzzello, "Air Quality Index," Encyclopaedia Britannica, 2024. [Online]. Available: https://www.britannica.com/science/Air-Quality-Index [Accessed: Dec. 14, 2024]
+
+\bibitem{b10}Persily A, de Jonge L. Carbon dioxide generation rates for building occupants. Indoor Air. 2017; 27: 868–879. https://doi.org/10.1111/ina.12383
+\end{thebibliography}
+\end{document}
